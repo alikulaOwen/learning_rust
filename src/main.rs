@@ -1,52 +1,39 @@
-mod my {
-    pub struct OpenBox<T> {
-        pub contents: T,
-    }
-
-    pub struct ClosedBox<T> {
-        contents: T,
-    }
-
-    impl<T> ClosedBox<T> {
-        pub fn new(contents: T) -> ClosedBox<T> {
-            ClosedBox { contents: contents }
-        }
-    }
-}
-
-use deeeply::nested::function as other_function;
-
 fn function() {
     println!("called `function()`");
 }
 
-mod deeeply {
-    pub mod nested {
-        pub fn function() {
-            println!("called `deeply::nested::function()`");
+mod cool {
+    pub fn function() {
+        println!("called `cool::function()`");
+    }
+}
+
+
+mod my{
+    fn function(){
+        println!("called `my::function()`");
+    }
+
+    mod cool{
+        pub fn function(){
+            println!("called `my::cool::function()`");
+        }
+    }
+
+    pub  fn indirect_call(){
+        print!("called `my::indirect_call()`, that\n> ");
+        self::function();
+        function();
+        self::cool::function();
+        super::function();
+        {
+            use crate::cool::function as root_function;
+            root_function();
         }
     }
 }
 
-fn main() {
-    let open_box = my::OpenBox {
-        contents: "public information",
-    };
-
-    println!("The open box contains: {}", open_box.contents);
-
-    let _closed_box = my::ClosedBox::new("classified information");
-
-    // Error! `contents` is private
-    //println!("The closed box contains: {}", closed_box.contents);
-
-    other_function();
-
-    println!("Entering block");
-    {
-        use crate::deeeply::nested::function;
-        function();
-
-        println!("Leaving block");
-    }
+fn main(){
+    println!("Hello, world!");
+    my::indirect_call();
 }
