@@ -1,21 +1,56 @@
-
 struct A;
+struct S(A);
 
-struct Single(A);
+struct SGenerics<T>(T);
 
-struct SingleGen<T>(T);
+fn reg_fn(_s: S){}
 
-fn main() {
-    println!("Hello, world!");
+fn gen_spec_t(_s: SGenerics<A>){}
+ 
+
+ fn gen_spec_i32(_s: SGenerics<i32>){}
 
 
-    let _s = Single(A);
+ fn generic<T>(_s: SGenerics<T>){}
 
-    let _char: SingleGen<char> = SingleGen('a');
+ struct Val {
+        val: f64
+ }
 
-    let _t = SingleGen(A); // uses A
-    let _i32 = SingleGen(6); // uses i32
-    let _char = SingleGen('a'); // uses char
+ impl Val {
+     fn value(&self) -> &f64 {
+         &self.val
+     }
+     fn sum (&self, other: &Val) -> f64 {
+         self.val + other.val
+     }
 
-}
+     fn multiply(&self, other: &Val) -> f64 {
+         self.val * other.val
+     }
+ }
+
+
+ fn main(){
+     reg_fn(S(A));
+     gen_spec_t(SGenerics(A));
+     gen_spec_i32(SGenerics(6));
+     generic(SGenerics(A));
+     generic(SGenerics(6));
+
+     generic::<char>(SGenerics('a'));
+
+        let a = Val {val: 3.0};
+        let b = Val {val: 4.0};
+
+        let sum_2 = a.sum(&b);
+
+        let mul_2 = a.multiply(&b);
+
+        println!("Sum: {}", sum_2);
+        println!("Multiply: {}", mul_2);
+
+        println!("Value: {}", a.value());
+        print!("Value: {}", b.value());
+ }
 
